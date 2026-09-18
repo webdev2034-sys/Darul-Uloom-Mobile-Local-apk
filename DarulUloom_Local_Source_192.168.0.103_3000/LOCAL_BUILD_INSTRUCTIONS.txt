@@ -1,0 +1,36 @@
+DARUL ULOOM - LOCAL APK BUILD
+
+Local backend URL:
+http://192.168.0.103:3000/api/
+
+Before building:
+1. Keep laptop and phone on the same Wi-Fi.
+2. Start the local Darul Uloom backend on port 3000.
+3. Make sure the backend listens on 0.0.0.0 (or your LAN interface), not only 127.0.0.1.
+4. Allow TCP port 3000 through Windows Firewall if required.
+
+Build from Command Prompt / PowerShell in this project folder:
+
+flutter pub get
+flutter clean
+flutter build apk --release --dart-define-from-file=env/local.json
+
+Generated APK:
+build\app\outputs\flutter-apk\app-release.apk
+
+For direct testing with a connected Android phone:
+flutter run --dart-define-from-file=env/local.json
+
+VS Code:
+Run and Debug -> Local
+
+Changes made for local testing:
+- env/local.json API_BASE_URL -> http://192.168.0.103:3000/api/
+- lib/app/config/constants.dart imageBaseUrl -> http://192.168.0.103:3000
+- Android INTERNET permission explicitly enabled
+- Android cleartext HTTP traffic enabled for local LAN testing
+- App label changed to Darul Uloom Local
+- VS Code Local launch profile added
+
+Important:
+This is for LOCAL TESTING ONLY. Do not use this local build for R&D or Live release.
