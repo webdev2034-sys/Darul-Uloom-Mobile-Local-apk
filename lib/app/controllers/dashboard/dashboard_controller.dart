@@ -36,30 +36,108 @@ class DashboardController extends GetxController {
       /// -------------------------------
       if ((role.contains("teacher") || role.contains("lecturer")) &&
           staffId.isNotEmpty) {
-        final response = await repository.getAttendanceContext(
+      
+        // First verify that this classroom/current period belongs to the teacher.
+        final contextResponse = await repository.getAttendanceContext(
           classroomId: classroomId,
           teacherId: staffId,
         );
-
-        if (response != null && response.statusCode == 200) {
-          final body = response.data;
-
-          if (body["success"] == true) {
-            successToast("Successfully Scanned");
-
-            Get.toNamed(
-              Routes.studentAttendance,
-              arguments: {
-                "classroomId": classroomId,
-              },
+      
+        if (contextResponse == null || contextResponse.statusCode != 200) {
+          errorToast("Unable to verify classroom");
+          return;
+        }
+      
+        final contextBody = contextResponse.data;
+      
+        if (contextBody["success"] != true) {
+          errorToast(
+            contextBody["message"] ?? "You are not assigned to this class",
+          );
+          return;
+        }
+      
+        // Record teacher period attendance.
+        // First valid scan = CHECK_IN
+        // Later valid scan = CHECK_OUT
+        final attendanceResponse = await repository.teacherPeriodQrScan(
+          classroomId: classroomId,
+        );
+      
+        if (attendanceResponse == null ||
+            (attendanceResponse.statusCode != 200 &&
+                attendanceResponse.statusCode != 201)) {
+          errorToast("Unable to record teacher attendance");
+          return;
+        }
+      
+        final attendanceBody = attendanceResponse.data;
+      
+        if (attendanceBody["success"] != true) {
+          errorToast(
+            attendanceBody["message"] ?? "Unable to record teacher attendance",
+          );
+          return;
+        }
+      
+        final attendanceData = attendanceBody["data"];
+      
+        if (attendanceData == null) {
+          errorToast("Invalid teacher attendance response");
+          return;
+        }
+      
+        final String action =
+            attendanceData["action"]?.toString().toUpperCase() ?? "";
+      
+        final bool duplicateScan =
+            attendanceData["duplicateScan"] == true;
+      
+        // ---------------------------------
+        // CHECK-IN
+        // ---------------------------------
+        if (action == "CHECK_IN") {
+      
+          // Scanner may report the same QR more than once.
+          // Backend debounce prevents an accidental checkout.
+          if (duplicateScan) {
+            return;
+          }
+      
+          successToast("Teacher Check-In Successful");
+      
+          // Continue the existing student attendance flow.
+          Get.toNamed(
+            Routes.studentAttendance,
+            arguments: {
+              "classroomId": classroomId,
+            },
+          );
+      
+          return;
+        }
+      
+        // ---------------------------------
+        // CHECK-OUT
+        // ---------------------------------
+        if (action == "CHECK_OUT") {
+          final String duration =
+              attendanceData["teachingDuration"]?.toString() ?? "";
+      
+          if (duration.isNotEmpty) {
+            successToast(
+              "Teacher Check-Out Successful. Duration: $duration",
             );
           } else {
-            errorToast(body["message"] ?? "You are not assigned to this class");
+            successToast("Teacher Check-Out Successful");
           }
-        } else {
-          errorToast("Unable to verify classroom");
+      
+          // IMPORTANT:
+          // Do not reopen Student Attendance after checkout.
+          return;
         }
-
+      
+        errorToast("Unknown teacher attendance action");
         return;
       }
 
