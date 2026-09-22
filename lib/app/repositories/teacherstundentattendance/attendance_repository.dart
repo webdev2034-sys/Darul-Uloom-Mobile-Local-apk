@@ -37,4 +37,17 @@ class AttendanceRepository {
 
     return response as Response?;
   }
+  /// Teacher classroom QR check-in / check-out
+  Future<Response?> teacherPeriodQrScan({
+    required String classroomId,
+  }) async {
+    final response = await ApiService.post(
+      EndPoints.teacherPeriodQrScan,
+      {
+        "classroomId": classroomId,
+      },
+    );
+  
+    return response as Response?;
+  }
 }
