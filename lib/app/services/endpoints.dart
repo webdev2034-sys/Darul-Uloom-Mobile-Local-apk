@@ -15,6 +15,7 @@ class EndPoints {
   static const classroomdetails = "attendance/periodwise/context/";
   static const classroomstudentsdetails = "attendance/periodwise/students/";
   static const saveAttendance = "attendance/periodwise";
+  static const teacherPeriodQrScan = "staff-period-attendance/qr-scan";
 
   // Hostel
   static const hostelblocksstructure = "hostel-rooms/blocks-structure";
