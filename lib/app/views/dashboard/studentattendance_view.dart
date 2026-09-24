@@ -159,103 +159,52 @@ class StudentAttendanceView extends GetView<AttendanceController> {
                       ),
 
                       const SizedBox(height: 20),
-                      Row(
+                      Column(
                         children: [
-                          /// PRESENT
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _attendanceCountCard(
+                                  label: "ح Present",
+                                  count: controller.presentCount.value,
+                                  color: Colors.green,
+                                ),
                               ),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Present",
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    "${controller.presentCount.value}",
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _attendanceCountCard(
+                                  label: "غ Absent",
+                                  count: controller.absentCount.value,
+                                  color: Colors.red,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-
-                          const SizedBox(width: 10),
-
-                          /// ABSENT
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _attendanceCountCard(
+                                  label: "ر Leave",
+                                  count: controller.leaveCount.value,
+                                  color: Colors.orange,
+                                ),
                               ),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Absent",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    "${controller.absentCount.value}",
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _attendanceCountCard(
+                                  label: "ب Sick",
+                                  count: controller.sickCount.value,
+                                  color: Colors.blue,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-
-                          const SizedBox(width: 10),
-
-                          /// TOTAL
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "Total",
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    "${controller.totalStudents.value}",
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          const SizedBox(height: 8),
+                          _attendanceCountCard(
+                            label: "Total",
+                            count: controller.totalStudents.value,
+                            color: Colors.blueGrey,
                           ),
                         ],
                       ),
@@ -526,4 +475,42 @@ class StudentAttendanceView extends GetView<AttendanceController> {
     ),
   );
 } 
+
+  Widget _attendanceCountCard({
+    required String label,
+    required int count,
+    required Color color,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: color,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "$count",
+            style: TextStyle(
+              color: color,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
