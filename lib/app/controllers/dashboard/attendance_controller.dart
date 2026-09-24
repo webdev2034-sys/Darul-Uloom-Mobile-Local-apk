@@ -153,7 +153,12 @@ class AttendanceController extends GetxController {
 
               name: e["studentName"] ?? "",
 
-              status: e["status"] == "present" ? "P" : "A",
+              status: switch (e["status"]?.toString().toLowerCase()) {
+                "absent" => "A",
+                "leave" => "L",
+                "sick" => "S",
+                _ => "P",
+              },
             );
           }),
         );
