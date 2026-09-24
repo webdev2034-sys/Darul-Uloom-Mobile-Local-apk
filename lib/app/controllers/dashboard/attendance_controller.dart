@@ -178,13 +178,13 @@ class AttendanceController extends GetxController {
     return DateTime.now().millisecondsSinceEpoch.toRadixString(36);
   }
 
-  void toggleAttendance(int index) {
-    if (students[index].status == "P") {
-      students[index].status = "A";
-    } else {
-      students[index].status = "P";
+  void setAttendanceStatus(int index, String status) {
+    if (!["P", "A", "L", "S"].contains(status)) {
+      return;
     }
-
+  
+    students[index].status = status;
+  
     students.refresh();
     calculateCounts();
   }
@@ -211,7 +211,12 @@ class AttendanceController extends GetxController {
         "students": students.map((e) {
           return {
             "studentId": e.studentId,
-            "status": e.status == "P" ? "present" : "absent",
+            "status": switch (student.status) {
+              "A" => "absent",
+              "L" => "leave",
+              "S" => "sick",
+              _ => "present",
+            },
             "remarks": "",
           };
         }).toList(),
