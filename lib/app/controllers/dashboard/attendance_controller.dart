@@ -25,8 +25,11 @@ class AttendanceController extends GetxController {
   final TextEditingController periodController = TextEditingController();
 
   /// COUNTS
+  /// COUNTS
   RxInt presentCount = 0.obs;
   RxInt absentCount = 0.obs;
+  RxInt leaveCount = 0.obs;
+  RxInt sickCount = 0.obs;
   RxInt totalStudents = 0.obs;
 
   RxBool isLoading = false.obs;
@@ -113,6 +116,8 @@ class AttendanceController extends GetxController {
 
           presentCount.value = 0;
           absentCount.value = 0;
+          leaveCount.value = 0;
+          sickCount.value = 0;
           totalStudents.value = 0;
 
           errorToast(data["message"]);
@@ -191,9 +196,13 @@ class AttendanceController extends GetxController {
 
   void calculateCounts() {
     presentCount.value = students.where((e) => e.status == "P").length;
-
+  
     absentCount.value = students.where((e) => e.status == "A").length;
-
+  
+    leaveCount.value = students.where((e) => e.status == "L").length;
+  
+    sickCount.value = students.where((e) => e.status == "S").length;
+  
     totalStudents.value = students.length;
   }
 
@@ -211,7 +220,7 @@ class AttendanceController extends GetxController {
         "students": students.map((e) {
           return {
             "studentId": e.studentId,
-            "status": switch (student.status) {
+            "status": switch (e.status) {
               "A" => "absent",
               "L" => "leave",
               "S" => "sick",
