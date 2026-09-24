@@ -411,45 +411,43 @@ class StudentAttendanceView extends GetView<AttendanceController> {
                                       child: Text(student.name),
                                     ),
                                     Expanded(
-                                      flex: 2,
-                                      child: Center(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            controller.toggleAttendance(index);
-                                          },
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                              milliseconds: 200,
-                                            ),
-                                            height: 42,
-                                            width: 42,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: student.status == "P"
-                                                  ? Colors.green
-                                                      .withOpacity(0.1)
-                                                  : Colors.red.withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                color: student.status == "P"
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                                width: 2,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              student.status,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: student.status == "P"
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                              ),
-                                            ),
+                                      flex: 4,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          _attendanceStatusButton(
+                                            label: "ح",
+                                            selected: student.status == "P",
+                                            color: Colors.green,
+                                            onTap: () {
+                                              controller.setAttendanceStatus(index, "P");
+                                            },
                                           ),
-                                        ),
+                                          _attendanceStatusButton(
+                                            label: "غ",
+                                            selected: student.status == "A",
+                                            color: Colors.red,
+                                            onTap: () {
+                                              controller.setAttendanceStatus(index, "A");
+                                            },
+                                          ),
+                                          _attendanceStatusButton(
+                                            label: "ر",
+                                            selected: student.status == "L",
+                                            color: Colors.orange,
+                                            onTap: () {
+                                              controller.setAttendanceStatus(index, "L");
+                                            },
+                                          ),
+                                          _attendanceStatusButton(
+                                            label: "ب",
+                                            selected: student.status == "S",
+                                            color: Colors.blue,
+                                            onTap: () {
+                                              controller.setAttendanceStatus(index, "S");
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -494,4 +492,38 @@ class StudentAttendanceView extends GetView<AttendanceController> {
           );
         }));
   }
+ Widget _attendanceStatusButton({
+  required String label,
+  required bool selected,
+  required Color color,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: 38,
+      width: 38,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: selected
+            ? color.withOpacity(0.20)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: selected ? color : Colors.grey.shade400,
+          width: selected ? 2 : 1,
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: selected ? color : Colors.grey.shade700,
+        ),
+      ),
+    ),
+  );
+} 
 }
